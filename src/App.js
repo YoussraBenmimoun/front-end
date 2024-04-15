@@ -20,6 +20,7 @@ import Navbar from "./components/user/Navbar";
 import Hero from "./components/user/Hero";
 import Featured from "./components/user/Featured";
 import Packages from "./components/user/Packages";
+import Cars from "./components/user/voitures/Cars";
 
 function App() {
   const [theme, colorMode] = useMode();
@@ -50,12 +51,13 @@ function App() {
     //     </div>
     //   </ThemeProvider>
     // </ColorModeContext.Provider>
-    <div>
-      <Navbar />
-      <Hero />
-      <Featured/>
-      <Packages/>
-    </div>
+    // <div>
+    //   <Navbar />
+    //   <Hero />
+    //   <Featured/>
+    //   <Packages/>
+    // </div>
+    <Cars/>
   );
 }
 
