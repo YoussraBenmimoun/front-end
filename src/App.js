@@ -13,7 +13,7 @@ import Line from "./scenes/line";
 import Pie from "./scenes/pie";
 import FAQ from "./scenes/faq";
 import Geography from "./scenes/geography";
-import { CssBaseline, ThemeProvider } from "@mui/material";
+import { CssBaseline, ThemeProvider, dividerClasses } from "@mui/material";
 import { ColorModeContext, useMode } from "./theme";
 import Calendar from "./scenes/calendar/calendar";
 import Navbar from "./components/user/Navbar";
@@ -21,6 +21,8 @@ import Hero from "./components/user/Hero";
 import Featured from "./components/user/Featured";
 import Packages from "./components/user/Packages";
 import Cars from "./components/user/voitures/Cars";
+import CardList from "./components/user/voitures/CardList";
+import Car from "./components/user/voitures/Car";
 
 function App() {
   const [theme, colorMode] = useMode();
@@ -57,7 +59,13 @@ function App() {
     //   <Featured/>
     //   <Packages/>
     // </div>
-    <Cars/>
+    <div>
+    {/* <CardList/> */}
+    <Routes>
+      <Route path="/cars"  element={<Cars/>}/>
+      <Route path="/car/:id" element={<Car/>} />
+    </Routes>
+    </div>
   );
 }
 
