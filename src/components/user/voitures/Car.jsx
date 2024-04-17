@@ -2,7 +2,6 @@ import React, { useEffect, useState } from 'react';
 import { useParams } from 'react-router-dom';
 import axios from 'axios';
 import ImageSlider from '../ImageSlider';
-import Navbar from '../Navbar';
 import Layout from './Layout';
 
 export default function Car() {
@@ -10,6 +9,9 @@ export default function Car() {
     const [car, setCar] = useState(null);
     const [data, setData] = useState([]);
     const [slides, setSlides] = useState([]);
+    const [location,setLocation] = useState("");
+    const [pickuptime,setPickuptime] = useState("");
+    const [dropofftime,setDropofftime] = useState("")
 
     const get_car = () => {
         axios.get(`http://localhost:8000/api/cars/${id}`)
@@ -34,12 +36,28 @@ export default function Car() {
         margin: "0 auto",
     };
 
+    const book_car = (id,location,pickuptime,dropofftime) => {
+        axios.post('http://localhost:8000/api/reservations', {
+            id: id,
+            location: location,
+            pickuptime: pickuptime,
+            dropofftime: dropofftime
+        })
+        .then(response => {
+            console.log(response.data);
+        })
+        .catch(error => {
+            console.error("Une erreur s'est produite !", error);
+        });
+    }
+
     return (
 
         <div>
             <Layout>
                 <div className="container mx-auto px-4 py-16">
                     {car && slides.length > 0 && (
+                        
                         <div >
                             <div className="max-w-3xl mx-auto">
                                 <div className="bg-white shadow-md rounded-lg overflow-hidden">
@@ -74,20 +92,33 @@ export default function Car() {
 
                                     <div className="flex justify-between m-10 gap-4">
                                         <div className="flex flex-col gap-4">
-                                            <p className="font-semibold text-lg mb-7">Pick-up location</p>
-                                            <input className="bg-light text-gray shadow border-none outline-none h-14 w-40 px-4 text-left text-base" type="text" placeholder="Tangier" />
+                                            <p className="font-semibold text-lg mb-7">Pick-up & drop-off location</p>
+                                            <input 
+                                            value = {location}
+                                            onChange={(e)=>{setLocation(e.target.value)}}
+                                            className="bg-light text-gray shadow border-none outline-none h-14 w-40 px-4 text-left text-base" 
+                                            type="text" placeholder="Tangier" />
                                         </div>
                                         <div className="flex flex-col gap-4">
                                             <p className="font-semibold text-lg">Pick-up date and time</p>
-                                            <input className="bg-light text-gray shadow border-none outline-none h-14 w-40 px-4 text-left text-base" type="datetime-local" />
+                                            <input 
+                                            value = {pickuptime}
+                                            onChange={(e)=>{setPickuptime(e.target.value)}}
+                                            className="bg-light text-gray shadow border-none outline-none h-14 w-40 px-4 text-left text-base" 
+                                            type="datetime-local" />
                                         </div>
                                         <div className="flex flex-col gap-4">
                                             <p className="font-semibold text-lg">Drop-off date and time</p>
-                                            <input className="bg-light text-gray shadow border-none outline-none h-14 w-40 px-4 text-left text-base" type="datetime-local" />
+                                            <input 
+                                            value = {dropofftime}
+                                            onChange={(e)=>{setDropofftime(e.target.value)}}
+                                            className="bg-light text-gray shadow border-none outline-none h-14 w-40 px-4 text-left text-base" 
+                                            type="datetime-local" />
                                         </div>
 
                                         <div className="flex items-end">
-                                            <button className="bg-primary rounded transition-bg shadow h-14 px-10 outline-none text-white hover:bg-white hover:text-primary cursor-pointer">
+                                            <button onClick={()=>{book_car(data.car.id,location,pickuptime,dropofftime)}}
+                                            className="bg-primary rounded transition-bg shadow h-14 px-10 outline-none text-white hover:bg-white hover:text-primary cursor-pointer">
                                                 Book Now
                                             </button>
                                         </div>

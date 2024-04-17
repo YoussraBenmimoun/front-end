@@ -63,7 +63,7 @@ function App() {
     {/* <CardList/> */}
     <Routes>
       <Route path="/cars"  element={<Cars/>}/>
-      <Route path="/car/:id" element={<Car/>} />
+      <Route path="/cars/:id" element={<Car/>} />
     </Routes>
     </div>
   );
