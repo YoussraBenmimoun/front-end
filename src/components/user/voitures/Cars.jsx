@@ -66,35 +66,43 @@ export default function Cars() {
         get_cities();
     }, [])
 
-    const handleBrand = (e) => {
-        const brandId = e.target.value;
-        setBrand(brandId);
-        const modelsFiltered = models.filter((model) => model.cbrand_id == brandId);
-        setModels(modelsFiltered);
-    }
-    const handleModel = async (e) => {
-        const modelId = e.target.value;
-        setModel(modelId);
-        try {
-            const response = await axios.get(`http://localhost:8000/api/cmodels/findBrand/${modelId}`);
-            console.log(response.data.brand.id);
-            setBrands([response.data.brand.id])
-            setBrand(response.data.brand.id)
-        } catch (error) {
-            console.error("Une erreur s'est produite:", error);
-        }
-    }
+    // const handleBrand = (e) => {
+    //     console.log(e.target.value);
+    //     const brandId = e.target.value;
+    //     setBrand(brandId);
+    //     const modelsFiltered = models.filter((model) => model.cbrand_id == brandId);
+    //     setModels(modelsFiltered);
+    // }
+    // const handleModel = async (e) => {
+    //     console.log(e.target.value);
+    //     const modelId = e.target.value;
+    //     setModel(modelId);
+    //     try {
+    //         const response = await axios.get(`http://localhost:8000/api/cmodels/findBrand/${modelId}`);
+    //         console.log(response.data.brand.id);
+    //         setBrands([response.data.brand.id])
+    //         setBrand(response.data.brand.id)
+    //     } catch (error) {
+    //         console.error("Une erreur s'est produite:", error);
+    //     }
+    // }
 
-    const handleCity = (e) => {
-        console.log(e.target.value)
-        const cityId = parseInt(e.target.value, 10); 
-        setCity(cityId);
-        const filteredCars = data.cars.filter(car => 
-            car.car.city_id === cityId
-        );
-        console.log(filteredCars); 
-        setData({...data, cars: filteredCars });
-    }
+    // const handleCity = (e) => {
+    //     console.log(e.target.value)
+    //     const cityId = parseInt(e.target.value, 10); 
+    //     setCity(cityId);
+    //     const filteredCars = data.cars.filter(car => 
+    //         car.car.city_id === cityId
+    //     );
+    //     console.log(filteredCars); 
+    //     setData({...data, cars: filteredCars });
+    // }
+     const filteredCars = data.filter(({car})=>{
+        const cityMatch = !city || car.city_name === city;
+        const brandMatch = !brand || car.brand_name === brand;
+        const modelMatch = !model || car.model_name === model;
+        return cityMatch && brandMatch && modelMatch;
+     })
 
     const EmptyFilters = () => {
         setBrand("");
@@ -106,25 +114,21 @@ export default function Cars() {
 
     }
 
-    // const filteredData = data.cars.filter((elem)=>{
-    //     const city_filter = !city || elem.car.city_id;
-    //     const brand_filter = !brand || elem.brand.id;
-    //     const model_filter = !model || elem.model.id
-    //     return city_filter && brand_filter && model_filter ;
-    // })
-
 
     return (
         <Layout>
             <div>
                 {
                     <select value={brand}
-                        onChange={handleBrand}
+                        onChange={(e)=>{
+                            setBrand(e.target.value)
+                            console.log(e.target.value);
+                        }}
                     >
                         {
                             brands.map((brand, index) => (
-                                <option key={index} value={brand.id}>
-                                    {brand.name}
+                                <option key={index} value={brand}>
+                                    {brand}
                                 </option>
                             ))
                         }
@@ -132,12 +136,12 @@ export default function Cars() {
                 }
                 {
                     <select value={model}
-                        onChange={handleModel}
+                        onChange={(e)=>{setModel(e.target.value)}}
                     >
                         {
                             models.map((model, index) => (
-                                <option key={index} value={model.id}>
-                                    {model.name}
+                                <option key={index} value={model}>
+                                    {model}
                                 </option>
                             ))
                         }
@@ -145,25 +149,27 @@ export default function Cars() {
                 }
                 {
                     <select value={city}
-                        onChange={handleCity}
+                        onChange={(e)=>{setCity(e.target.value)}}
+                    
                     >
+                        
                         {
                             cities.map((city, index) => (
-                                <option key={index} value={city.id}>
-                                    {city.name}
+                                <option key={index} value={city}>
+                                    {city}
                                 </option>
                             ))
                         }
                     </select>
                 }
                 <button type='button' onClick={EmptyFilters}>Empty filters</button>
-                {data.cars && (
+                {filteredCars && (
                     <ul className="grid grid-cols-1 xl:grid-cols-3 gap-y-10 gap-x-6 items-start p-8">
-                        {data.cars.map((car, index) => (
+                        {filteredCars.map((car, index) => (
                             <li key={index} className="relative flex flex-col sm:flex-row xl:flex-col items-start">
                                 <div className="order-1 sm:ml-6 xl:ml-0">
                                     <h3 className="mb-1 text-slate-900 font-semibold">
-                                        <span className="mb-1 block text-sm leading-6 text-indigo-500"> {car.brand.name} {car.model.name}</span>
+                                        <span className="mb-1 block text-sm leading-6 text-indigo-500"> {car.car.brand_name} {car.car.model_name}</span>
                                         price per day : {car.car.price_per_day} DH
                                     </h3>
                                     <div className="prose prose-slate prose-sm text-slate-600">
@@ -177,7 +183,8 @@ export default function Cars() {
                                         </svg>
                                     </Link>
                                 </div>
-                                <img src={car.offer.images[0].url} alt="" className="mb-6 shadow-md rounded-lg bg-slate-50 w-full sm:w-[17rem] sm:mb-0 xl:mb-6 xl:w-full" width="1216" height="640" />
+                                <img src={car.offer && car.offer.images && car.offer.images.length > 0 ? car.offer.images[0].url : 'placeholder_url'} alt="" className="mb-6 shadow-md rounded-lg bg-slate-50 w-full sm:w-[17rem] sm:mb-0 xl:mb-6 xl:w-full" width="1216" height="640" />
+
 
                             </li>
                         ))}

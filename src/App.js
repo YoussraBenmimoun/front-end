@@ -21,8 +21,9 @@ import Hero from "./components/user/Hero";
 import Featured from "./components/user/Featured";
 import Packages from "./components/user/Packages";
 import Cars from "./components/user/voitures/Cars";
-import CardList from "./components/user/voitures/CardList";
 import Car from "./components/user/voitures/Car";
+import Restaurants from "./components/user/restaurants/Restaurants";
+import Details from "./components/user/restaurants/Details";
 
 function App() {
   const [theme, colorMode] = useMode();
@@ -60,10 +61,12 @@ function App() {
     //   <Packages/>
     // </div>
     <div>
-    {/* <CardList/> */}
     <Routes>
       <Route path="/cars"  element={<Cars/>}/>
       <Route path="/cars/:id" element={<Car/>} />
+      <Route path="/restaurants" element={<Restaurants/>} />
+      <Route path="/restaurants/:id" element={<Details/>} />
+
     </Routes>
     </div>
   );
