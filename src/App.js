@@ -24,6 +24,9 @@ import Cars from "./components/user/voitures/Cars";
 import Car from "./components/user/voitures/Car";
 import Restaurants from "./components/user/restaurants/Restaurants";
 import Details from "./components/user/restaurants/Details";
+import Auth from "./components/Auth";
+import Hotels from "./components/user/hotels/Hotels";
+import Hotel from "./components/user/hotels/Hotel";
 
 function App() {
   const [theme, colorMode] = useMode();
@@ -60,14 +63,17 @@ function App() {
     //   <Featured/>
     //   <Packages/>
     // </div>
+   
     <div>
-    <Routes>
-      <Route path="/cars"  element={<Cars/>}/>
-      <Route path="/cars/:id" element={<Car/>} />
-      <Route path="/restaurants" element={<Restaurants/>} />
-      <Route path="/restaurants/:id" element={<Details/>} />
-
-    </Routes>
+      <Routes>
+        <Route path="/cars" element={<Cars />} />
+        <Route path="/cars/:id" element={<Car />} />
+        <Route path="/restaurants" element={<Restaurants />} />
+        <Route path="/restaurants/:id" element={<Details />} />
+        <Route path="/login" element={<Auth />} />
+        <Route path="/hotels" element={<Hotels/>} />
+        <Route path="/hotels/:id" element={<Hotel/>} />
+      </Routes>
     </div>
   );
 }

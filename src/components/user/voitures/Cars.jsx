@@ -66,37 +66,7 @@ export default function Cars() {
         get_cities();
     }, [])
 
-    // const handleBrand = (e) => {
-    //     console.log(e.target.value);
-    //     const brandId = e.target.value;
-    //     setBrand(brandId);
-    //     const modelsFiltered = models.filter((model) => model.cbrand_id == brandId);
-    //     setModels(modelsFiltered);
-    // }
-    // const handleModel = async (e) => {
-    //     console.log(e.target.value);
-    //     const modelId = e.target.value;
-    //     setModel(modelId);
-    //     try {
-    //         const response = await axios.get(`http://localhost:8000/api/cmodels/findBrand/${modelId}`);
-    //         console.log(response.data.brand.id);
-    //         setBrands([response.data.brand.id])
-    //         setBrand(response.data.brand.id)
-    //     } catch (error) {
-    //         console.error("Une erreur s'est produite:", error);
-    //     }
-    // }
-
-    // const handleCity = (e) => {
-    //     console.log(e.target.value)
-    //     const cityId = parseInt(e.target.value, 10); 
-    //     setCity(cityId);
-    //     const filteredCars = data.cars.filter(car => 
-    //         car.car.city_id === cityId
-    //     );
-    //     console.log(filteredCars); 
-    //     setData({...data, cars: filteredCars });
-    // }
+    
      const filteredCars = data.filter(({car})=>{
         const cityMatch = !city || car.city_name === city;
         const brandMatch = !brand || car.brand_name === brand;

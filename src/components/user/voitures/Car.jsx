@@ -36,12 +36,13 @@ export default function Car() {
         margin: "0 auto",
     };
 
-    const book_car = (id,location,pickuptime,dropofftime) => {
-        axios.post('http://localhost:8000/api/reservations', {
+    const book_car = (id,location,pickuptime,dropofftime,offer_id) => {
+        axios.post('http://localhost:8000/api/reservations/store_car', {
             id: id,
             location: location,
             pickuptime: pickuptime,
-            dropofftime: dropofftime
+            dropofftime: dropofftime,
+            offer_id: offer_id
         })
         .then(response => {
             console.log(response.data);
@@ -49,6 +50,16 @@ export default function Car() {
         .catch(error => {
             console.error("Une erreur s'est produite !", error);
         });
+    }
+    
+    const bill = () => {
+        axios.get(`http://localhost:8000/api/bills`)
+            .then(response => {
+                console.log(response);
+            })
+            .catch(error => {
+                console.error("Une erreur s'est produite !", error);
+            });
     }
 
     return (
@@ -117,11 +128,12 @@ export default function Car() {
                                         </div>
 
                                         <div className="flex items-end">
-                                            <button onClick={()=>{book_car(data.car.id,location,pickuptime,dropofftime)}}
+                                            <button onClick={()=>{book_car(data.car.id,location,pickuptime,dropofftime,data.offer[0].id)}}
                                             className="bg-primary rounded transition-bg shadow h-14 px-10 outline-none text-white hover:bg-white hover:text-primary cursor-pointer">
                                                 Book Now
                                             </button>
                                         </div>
+                                        <button onClick={bill}>bill</button>
                                     </div>
                                 </div>
                             </div>
