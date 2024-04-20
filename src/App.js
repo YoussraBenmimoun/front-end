@@ -23,6 +23,8 @@ import Packages from "./components/user/Packages";
 import Cars from "./components/user/voitures/Cars";
 import CardList from "./components/user/voitures/CardList";
 import Car from "./components/user/voitures/Car";
+import Hotels from "./components/user/Hotels/Hotels";
+import Hotel from "./components/user/Hotels/Hotel";
 
 function App() {
   const [theme, colorMode] = useMode();
@@ -64,6 +66,8 @@ function App() {
     <Routes>
       <Route path="/cars"  element={<Cars/>}/>
       <Route path="/cars/:id" element={<Car/>} />
+      <Route path="/hotels"  element={<Hotels/>}/>
+      <Route path="/hotels/:id" element={<Hotel/>} />
     </Routes>
     </div>
   );
