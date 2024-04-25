@@ -25,10 +25,16 @@ import CardList from "./components/user/voitures/CardList";
 import Car from "./components/user/voitures/Car";
 import Hotels from "./components/user/Hotels/Hotels";
 import Hotel from "./components/user/Hotels/Hotel";
+import ClientReservation from "./components/user/Client/ClientReservation";
+import UserUpdateForm from "./components/user/UserUpdateForm";
+import axios from "axios";
+import { useEffect } from "react";
+import ClientReservations from './components/user/Client/ClientReservations';
 
 function App() {
   const [theme, colorMode] = useMode();
   const [isSidebar, setIsSidebar] = useState(true);
+  const userId =2;
 
   return (
     // <ColorModeContext.Provider value={colorMode}>
@@ -64,10 +70,12 @@ function App() {
     <div>
     {/* <CardList/> */}
     <Routes>
-      <Route path="/cars"  element={<Cars/>}/>
-      <Route path="/cars/:id" element={<Car/>} />
-      <Route path="/hotels"  element={<Hotels/>}/>
-      <Route path="/hotels/:id" element={<Hotel/>} />
+        {/* <Route path="/cars"  element={<Cars/>}/>
+        <Route path="/cars/:id" element={<Car/>} />
+        <Route path="/hotels"  element={<Hotels/>}/>
+        <Route path="/hotels/:id" element={<Hotel/>} /> */}
+        <Route path="/reservations/:id" element={< ClientReservations />} />
+        <Route path="/users/:id" element={< UserUpdateForm userId={userId}/>} />
     </Routes>
     </div>
   );
