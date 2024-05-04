@@ -12,10 +12,21 @@ import GeographyChart from "../../components/admin/GeographyChart";
 import BarChart from "../../components/admin/BarChart";
 import StatBox from "../../components/admin/StatBox";
 import ProgressCircle from "../../components/admin/ProgressCircle";
+import { useNavigate } from "react-router-dom";
+import { useEffect } from "react";
 
 const Dashboard = () => {
   const theme = useTheme();
   const colors = tokens(theme.palette.mode);
+  const navigate = useNavigate();
+
+  // useEffect(() => {
+  //   const token = window.localStorage.getItem("token");
+  
+  //     if (!token) {
+  //       navigate("/login");
+  //     }
+  //   }, [navigate]);
 
   return (
     <Box m="20px">
