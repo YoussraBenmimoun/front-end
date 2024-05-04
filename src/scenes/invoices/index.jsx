@@ -1,50 +1,91 @@
-import { Box, Typography, useTheme } from "@mui/material";
+import { Box, Typography, useTheme, Button } from "@mui/material";
 import { DataGrid } from "@mui/x-data-grid";
 import { tokens } from "../../theme";
 import { mockDataInvoices } from "../../data/mockData";
 import Header from "../../components/admin/Header";
+import axios from "axios";
+import { useState, useEffect } from "react";
 
 const Invoices = () => {
   const theme = useTheme();
   const colors = tokens(theme.palette.mode);
+  const [rows, setRows] = useState([]);
+  
+  const [selectionModel, setSelectionModel] = useState([]);
+  const [selectedRows, setSelectedRows] = useState([]);
+
+  const fetchData = async () => {
+    try {
+      const response = await axios.get("http://localhost:8000/api/offers");
+      const formattedRows = response.data.offers.map(offer => {
+        let host = (offer.host.first_name || "") + " " + (offer.host.last_name || "");
+        let date = new Date(offer.created_at);
+
+        return {
+          id: offer.id,
+          type: offer.type,
+          host: host,
+          date: date.toLocaleDateString('fr-FR')
+        };
+      });
+      setRows(formattedRows);
+    } catch (error) {
+      console.log("Error fetching offers", error);
+    }
+  };
+  useEffect(() => {
+    fetchData();
+  }, []);
+
   const columns = [
     { field: "id", headerName: "ID" },
     {
-      field: "name",
-      headerName: "Name",
+      field: "type",
+      headerName: "Type",
       flex: 1,
       cellClassName: "name-column--cell",
     },
     {
-      field: "phone",
-      headerName: "Phone Number",
+      field: "host",
+      headerName: "Host",
       flex: 1,
-    },
-    {
-      field: "email",
-      headerName: "Email",
-      flex: 1,
-    },
-    {
-      field: "cost",
-      headerName: "Cost",
-      flex: 1,
-      renderCell: (params) => (
-        <Typography color={colors.greenAccent[500]}>
-          ${params.row.cost}
-        </Typography>
-      ),
     },
     {
       field: "date",
-      headerName: "Date",
+      headerName: "Created At",
       flex: 1,
+      renderCell: (params) => (
+        <Typography color={colors.greenAccent[500]}>
+          {params.row.date}
+        </Typography>
+      ),
     },
+
   ];
 
+  const handleDeleteSelectedOffers = async () => {
+    console.log(selectedRows);
+    try {
+      await axios.delete("http://localhost:8000/api/delete_offers", {
+        data: { ids_of_offers_to_delete: selectedRows }
+      });
+      fetchData();
+    } catch (error) {
+      console.log("error deleting offers", error);
+    }
+  }
   return (
     <Box m="20px">
-      <Header title="INVOICES" subtitle="List of Invoice Balances" />
+      <Header title="OFFERS" subtitle="List of Offers" />
+      <Box sx={{ m: 2 }}>
+        <Button
+          variant="contained"
+          color="primary"
+          onClick={handleDeleteSelectedOffers}
+        >
+          Delete Selected Offers
+        </Button>
+      </Box>
       <Box
         m="40px 0 0 0"
         height="75vh"
@@ -74,7 +115,16 @@ const Invoices = () => {
           },
         }}
       >
-        <DataGrid checkboxSelection rows={mockDataInvoices} columns={columns} />
+        <DataGrid
+          checkboxSelection
+          rows={rows}
+          columns={columns}
+          selectionModel={selectionModel}
+
+          onRowSelectionModelChange={(ids) => {
+            console.log(ids);
+            setSelectedRows(ids);
+          }} />
       </Box>
     </Box>
   );

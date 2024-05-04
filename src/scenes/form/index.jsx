@@ -3,22 +3,40 @@ import { Formik } from "formik";
 import * as yup from "yup";
 import useMediaQuery from "@mui/material/useMediaQuery";
 import Header from "../../components/admin/Header";
+import { Input } from '@mui/material';
+import { useState } from "react";
+import axios from "axios";
 
 const Form = () => {
   const isNonMobile = useMediaQuery("(min-width:600px)");
+  const [fieldValue, setFieldValue] = useState();
+  const [selectedFile, setSelectedFile] = useState(null);
 
-  const handleFormSubmit = (values) => {
+  const handleFileChange = (event) => {
+    setSelectedFile(event.target.files[0]);
+  };
+
+  const handleFormSubmit = async (values) => {
+    values = {...values,file: selectedFile};
+    console.log(selectedFile);
     console.log(values);
+    try {
+      const response = await axios.put("http://localhost:8000/api/admin", values);
+      console.log(response.data);
+    } catch (error) {
+      console.log("error updating user", error);
+    }
+
   };
 
   return (
     <Box m="20px">
-      <Header title="CREATE USER" subtitle="Create a New User Profile" />
-
+      <Header title="UPDATE PROFILE" />
       <Formik
         onSubmit={handleFormSubmit}
         initialValues={initialValues}
         validationSchema={checkoutSchema}
+        sx={{ enctype: "multipart/form-data" }}
       >
         {({
           values,
@@ -37,7 +55,7 @@ const Form = () => {
                 "& > div": { gridColumn: isNonMobile ? undefined : "span 4" },
               }}
             >
-              <TextField
+              {/* <TextField
                 fullWidth
                 variant="filled"
                 type="text"
@@ -62,7 +80,7 @@ const Form = () => {
                 error={!!touched.lastName && !!errors.lastName}
                 helperText={touched.lastName && errors.lastName}
                 sx={{ gridColumn: "span 2" }}
-              />
+              /> */}
               <TextField
                 fullWidth
                 variant="filled"
@@ -80,11 +98,11 @@ const Form = () => {
                 fullWidth
                 variant="filled"
                 type="text"
-                label="Contact Number"
+                label="Password"
                 onBlur={handleBlur}
                 onChange={handleChange}
-                value={values.contact}
-                name="contact"
+                value={values.password}
+                name="password"
                 error={!!touched.contact && !!errors.contact}
                 helperText={touched.contact && errors.contact}
                 sx={{ gridColumn: "span 4" }}
@@ -93,32 +111,32 @@ const Form = () => {
                 fullWidth
                 variant="filled"
                 type="text"
-                label="Address 1"
+                label="ConfirmPassword"
                 onBlur={handleBlur}
                 onChange={handleChange}
-                value={values.address1}
-                name="address1"
+                value={values.confirmPassword}
+                name="confirmPassword"
                 error={!!touched.address1 && !!errors.address1}
                 helperText={touched.address1 && errors.address1}
                 sx={{ gridColumn: "span 4" }}
               />
-              <TextField
-                fullWidth
-                variant="filled"
-                type="text"
-                label="Address 2"
-                onBlur={handleBlur}
-                onChange={handleChange}
-                value={values.address2}
-                name="address2"
-                error={!!touched.address2 && !!errors.address2}
-                helperText={touched.address2 && errors.address2}
+
+              <input type="file" onChange={handleFileChange} />
+              {/* <Input
+                type="file"
+                name="file" // Ajout de l'attribut name
+                onChange={(event) => {
+                  const file = event.currentTarget.files[0];
+                  handleChange(event); // Pour mettre à jour la valeur dans Formik
+                  setFieldValue("file", file); // Pour mettre à jour la valeur de file
+                }}
                 sx={{ gridColumn: "span 4" }}
-              />
+              /> */}
+
             </Box>
             <Box display="flex" justifyContent="end" mt="20px">
               <Button type="submit" color="secondary" variant="contained">
-                Create New User
+                SUBMIT
               </Button>
             </Box>
           </form>
@@ -128,27 +146,24 @@ const Form = () => {
   );
 };
 
-const phoneRegExp =
-  /^((\+[1-9]{1,4}[ -]?)|(\([0-9]{2,3}\)[ -]?)|([0-9]{2,4})[ -]?)*?[0-9]{3,4}[ -]?[0-9]{3,4}$/;
+
 
 const checkoutSchema = yup.object().shape({
-  firstName: yup.string().required("required"),
-  lastName: yup.string().required("required"),
-  email: yup.string().email("invalid email").required("required"),
-  contact: yup
+  email: yup.string().email("Invalid email").required("Email is required"),
+  password: yup
     .string()
-    .matches(phoneRegExp, "Phone number is not valid")
-    .required("required"),
-  address1: yup.string().required("required"),
-  address2: yup.string().required("required"),
+    .min(8, "Password must be at least 8 characters")
+    .required("Password is required"),
+  confirmPassword: yup
+    .string()
+    .oneOf([yup.ref("password"), null], "Passwords must match")
+    .required("Please confirm your password"),
 });
 const initialValues = {
-  firstName: "",
-  lastName: "",
   email: "",
-  contact: "",
-  address1: "",
-  address2: "",
+  password: "",
+  confirmPassword: "",
+  file: "",
 };
 
 export default Form;

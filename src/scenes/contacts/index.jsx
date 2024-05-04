@@ -1,62 +1,80 @@
-import { Box } from "@mui/material";
 import { DataGrid, GridToolbar } from "@mui/x-data-grid";
 import { tokens } from "../../theme";
 import { mockDataContacts } from "../../data/mockData";
 import Header from "../../components/admin/Header";
-import { useTheme } from "@mui/material";
+import { Box, Typography, useTheme, Button, Checkbox, TextField } from "@mui/material";
+import { useState, useEffect } from "react";
+import axios from "axios";
+import { Link } from "react-router-dom";
 
 const Contacts = () => {
   const theme = useTheme();
   const colors = tokens(theme.palette.mode);
+  const [rows, setRows] = useState([]);
+
+  const fetchData = async () => {
+    try {
+      const response = await axios.get("http://localhost:8000/api/reservations");
+      const formattedRows = response.data.reservations.map(reservation => {
+        let client = (reservation.client.first_name || "") + " " + (reservation.client.last_name || "");
+
+        return {
+          id: reservation.id,
+          client_id: reservation.client_id,
+          client: client,
+          offer: reservation.offer.id,
+          offer_type: reservation.offer.type,
+          billed: reservation.billed,
+        };
+      });
+      setRows(formattedRows);
+    } catch (error) {
+      console.log("Error fetching users", error);
+    }
+  };
+
+  useEffect(() => {
+    fetchData();
+    console.log(rows);
+  }, []);
+
+  
 
   const columns = [
     { field: "id", headerName: "ID", flex: 0.5 },
-    { field: "registrarId", headerName: "Registrar ID" },
+    { field: "client", headerName: "Client", flex: 1, cellClassName: "name-column--cell",
+    renderCell: (params) => (
+      <Link to={`/client/${params.row.client_id}`}>
+        {console.log(params.row.client_id)}
+        {params.value}
+      </Link>
+    ),
+  },
     {
-      field: "name",
-      headerName: "Name",
+      field: "offer",
+      headerName: "Offer ID",
       flex: 1,
       cellClassName: "name-column--cell",
     },
     {
-      field: "age",
-      headerName: "Age",
-      type: "number",
-      headerAlign: "left",
-      align: "left",
+      field: "offer_type",
+      headerName: "Offer Type",
+      flex: 1,
+      cellClassName: "name-column--cell",
     },
     {
-      field: "phone",
-      headerName: "Phone Number",
-      flex: 1,
-    },
-    {
-      field: "email",
-      headerName: "Email",
-      flex: 1,
-    },
-    {
-      field: "address",
-      headerName: "Address",
-      flex: 1,
-    },
-    {
-      field: "city",
-      headerName: "City",
-      flex: 1,
-    },
-    {
-      field: "zipCode",
-      headerName: "Zip Code",
-      flex: 1,
+      field: 'billed',
+      headerName: 'Billed',
+      width: 100,
+      type: 'boolean',
     },
   ];
 
   return (
     <Box m="20px">
       <Header
-        title="CONTACTS"
-        subtitle="List of Contacts for Future Reference"
+        title="Reservations"
+        subtitle="List of reservations"
       />
       <Box
         m="40px 0 0 0"
@@ -91,7 +109,7 @@ const Contacts = () => {
         }}
       >
         <DataGrid
-          rows={mockDataContacts}
+          rows={rows}
           columns={columns}
           components={{ Toolbar: GridToolbar }}
         />
