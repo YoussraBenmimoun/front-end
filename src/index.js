@@ -5,6 +5,12 @@ import App from "./App";
 import { BrowserRouter } from "react-router-dom";
 import 'tailwindcss/tailwind.css';
 
+import { Provider } from 'react-redux';
+import "remixicon/fonts/remixicon.css";
+import "slick-carousel/slick/slick.css";
+import "slick-carousel/slick/slick-theme.css";
+import store from './store/store';
+
 // import axios from "axios";
 
 // axios.interceptors.request.use((config) => {
@@ -16,8 +22,10 @@ import 'tailwindcss/tailwind.css';
 const root = ReactDOM.createRoot(document.getElementById("root"));
 root.render(
   <React.StrictMode>
-    <BrowserRouter>
-      <App />
-    </BrowserRouter>
+    <Provider store={store}>
+      <BrowserRouter>
+        <App />
+      </BrowserRouter>
+    </Provider>
   </React.StrictMode>
 );
