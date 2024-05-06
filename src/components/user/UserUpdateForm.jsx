@@ -1,116 +1,79 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import axios from 'axios';
+import { useParams } from 'react-router-dom/dist';
 
-function UserUpdateForm({ userId }) {
-  const [userData, setUserData] = useState(null);
+const UserUpdateForm = ({ user }) => {
+  const { id } = useParams();
+  console.log('User:', user);
   const [formData, setFormData] = useState({
-    image: '',
-    email: '',
+    first_name: user ? user.first_name : '',
+    last_name: user ? user.last_name : '',
     password: '',
-    first_name: '',
-    last_name: '',
-    address: '',
-    telephone: '',
-    birth_date: '',
+    password_confirmation: '',
+    avatar: null,
   });
 
-  useEffect(() => {
-    if (userId) {
-      axios.get(`http://localhost:8000/api/users/${userId}`)
-        .then(response => {
-          setUserData(response.data);
-          setFormData({
-            image: response.data.data.image || '',
-            email: response.data.data.email,
-            first_name: response.data.data.first_name,
-            last_name: response.data.data.last_name,
-            address: response.data.data.address || '',
-            telephone: response.data.data.telephone,
-            birth_date: response.data.data.birth_date,
-          });
-        })
-        .catch(error => {
-          console.error('Error fetching user data:', error);
-        });
-    }
-  }, [userId]);
-
-  const handleChange = e => {
+  const handleChange = (e) => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
   };
 
-  const handleImageChange = event => {
-    const file = event.target.files[0];
-    setFormData(prevState => ({
-      ...prevState,
-      image: file
-    }));
+  const handleFileChange = (e) => {
+    setFormData({ ...formData, avatar: e.target.files[0] });
   };
 
-  const handleSubmit = async e => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
+  
+    const formDataToSend = new FormData();
+    formDataToSend.append('first_name', formData.first_name);
+    formDataToSend.append('last_name', formData.last_name);
+    formDataToSend.append('password', formData.password);
+    formDataToSend.append('password_confirmation', formData.password_confirmation);
+    formDataToSend.append('avatar', formData.avatar);
+  
     try {
-      const response = await axios.put(`http://localhost:8000/api/users/${userId}`, formData);
-      console.log('User data updated successfully:', response.data);
-   
-    } catch (error) {
-      console.error('Error updating user data:', error);
-    }
-    console.log('Form submitted:', formData);
-  };
+      const response = await axios.put(`http://localhost:8000/api/users/${id}/update`, formDataToSend, {
+        headers: {
+          'Content-Type': 'multipart/form-data',
+          'Authorization': `Bearer ${localStorage.getItem('token')}`,
+        },
+      });
+      console.log(response.data);
 
-  if (!userData) {
-    return <div>Loading...</div>;
-  }
+    } catch (error) {
+      console.error(error.response.data);
+    }
+  };
+  
 
   return (
-    <div>
-      <h2>User Update Form</h2>
-      <form onSubmit={handleSubmit}>
-      <label>
-          Image:
-          <input type="file" name="image" onChange={handleImageChange} />
-        </label>
-        <label>
-          Email:
-          <input type="email" name="email" value={formData.email} onChange={handleChange} />
-        </label>
-        <br />
-        <label>
-          Password:
-          <input type="password" name="password" value={formData.password} onChange={handleChange} />
-        </label>
-        <br />
-        <br />
-        <label>
-          First Name:
-          <input type="text" name="first_name" value={formData.first_name} onChange={handleChange} />
-        </label>
-        <br />
-        <label>
-          Last Name:
-          <input type="text" name="last_name" value={formData.last_name} onChange={handleChange} />
-        </label>
-        <br />
-        <label>
-          Address:
-          <input type="text" name="address" value={formData.address} onChange={handleChange} />
-        </label>
-        <br />
-        <label>
-          Telephone:
-          <input type="tel" name="telephone" value={formData.telephone} onChange={handleChange} />
-        </label>
-        <br />
-        <label>
-          Birth Date:
-          <input type="date" name="birth_date" value={formData.birth_date} onChange={handleChange} />
-        </label>
-        <br />
-        <button type="submit">Update</button>
-      </form>
-    </div>
+    <form onSubmit={handleSubmit} encType="multipart/form-data">
+      <div>
+        <label htmlFor="first_name">First Name:</label>
+        <input type="text" id="first_name" name="first_name" value={formData.first_name} onChange={handleChange} required />
+      </div>
+      <div>
+        <label htmlFor="last_name">Last Name:</label>
+        <input type="text" id="last_name" name="last_name" value={formData.last_name} onChange={handleChange} required />
+      </div>
+
+      <div>
+        <label htmlFor="password">Password:</label>
+        <input type="password" id="password" name="password" value={formData.password} onChange={handleChange} required />
+      </div>
+      <div>
+        <label htmlFor="password_confirmation">Confirm Password:</label>
+        <input type="password" id="password_confirmation" name="password_confirmation" value={formData.password_confirmation} onChange={handleChange} required />
+      </div>
+
+      <div>
+        <label htmlFor="avatar">Avatar:</label>
+        <input type="file" id="avatar" name="avatar" onChange={handleFileChange} />
+      </div>
+
+      <button type="submit">Update Profile</button>
+    </form>
   );
-}
+};
 
 export default UserUpdateForm;

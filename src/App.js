@@ -12,6 +12,7 @@ import Form from "./scenes/form";
 import Line from "./scenes/line";
 import Pie from "./scenes/pie";
 import FAQ from "./scenes/faq";
+
 import Geography from "./scenes/geography";
 import { CssBaseline, ThemeProvider, dividerClasses } from "@mui/material";
 import { ColorModeContext, useMode } from "./theme";
@@ -25,17 +26,20 @@ import CardList from "./components/user/voitures/CardList";
 import Car from "./components/user/voitures/Car";
 import Hotels from "./components/user/Hotels/Hotels";
 import Hotel from "./components/user/Hotels/Hotel";
-import ClientReservation from "./components/user/Client/ClientReservation";
-import UserUpdateForm from "./components/user/UserUpdateForm";
+import UserUpdateForm from "./components/UserUpdateForm";
 import axios from "axios";
 import { useEffect } from "react";
 import ClientReservations from './components/user/Client/ClientReservations';
+import { useParams } from "react-router-dom/dist";
+import ProfilePage from "./components/ProfilePage";
+import Auth from './components/Auth';
+import Inscr from './components/Inscr';
 
 function App() {
   const [theme, colorMode] = useMode();
   const [isSidebar, setIsSidebar] = useState(true);
-  const userId =2;
-
+  
+  
   return (
     // <ColorModeContext.Provider value={colorMode}>
     //   <ThemeProvider theme={theme}>
@@ -74,9 +78,14 @@ function App() {
         <Route path="/cars/:id" element={<Car/>} />
         <Route path="/hotels"  element={<Hotels/>}/>
         <Route path="/hotels/:id" element={<Hotel/>} /> */}
-        <Route path="/reservations/:id" element={< ClientReservations />} />
-        <Route path="/users/:id" element={< UserUpdateForm userId={userId}/>} />
+        <Route path="/reservations" element={< ClientReservations />} />
+        <Route path="/profile" element={< ProfilePage />} />
+        <Route path="/reservations" element={< UserUpdateForm />} />
+
+
+
     </Routes>
+
     </div>
   );
 }
