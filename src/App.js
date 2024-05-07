@@ -53,6 +53,7 @@ import RestaurantDetails from "./pages/RestaurantDetails";
 import LoginPage from "./pages/LoginPage";
 import RegisterPage from "./pages/RegisterPage";
 import RegisterHosterPage from "./pages/HostRegistration";
+import BillDetails from "./components/host/BillDetails";
 
 function App() {
   const [theme, colorMode] = useMode();
@@ -66,6 +67,7 @@ function App() {
 
   return (
     <div>
+      
       {/* <ColorModeContext.Provider value={colorMode}>
         <ThemeProvider theme={theme}>
           <CssBaseline />
@@ -105,7 +107,7 @@ function App() {
 
 
 
-      {/* <div>
+      <div>
         <Routes>
           <Route path="/cars" element={<Cars />} />
           <Route path="/cars/:id" element={<Car />} />
@@ -115,8 +117,9 @@ function App() {
           <Route path="/hotels" element={<Hotels />} />
           <Route path="/hotels/:id" element={<Hotel />} />
           <Route path="/notifications" element={<Notifications />} />
+          <Route path="/bill_details/:id/:bill_id" element={<BillDetails/>} />
         </Routes>
-      </div> */}
+      </div>
 
       {/* <Routes>
         <Route path="/login" element={<Auth onLogin={handleLogin} />} />
@@ -128,7 +131,7 @@ function App() {
       </Routes> */}
 
 
-      <Routes>
+      {/* <Routes>
         <Route path="/" element={<Navigate to="/home" />} />
         <Route path="/home" element={<Home />} />
         <Route path="/tours" element={<Tours />} />
@@ -142,7 +145,7 @@ function App() {
         <Route path="/LoginPage" element={<LoginPage />} />
         <Route path="/register" element={<RegisterPage />} />
         <Route path="/RegisterHosterForm" element={<RegisterHosterPage />} />
-      </Routes>
+      </Routes> */}
     </div>
   );
 }

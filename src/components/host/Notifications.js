@@ -1,5 +1,6 @@
 import axios from "axios";
 import { useEffect, useState } from "react";
+import { Link } from "react-router-dom";
 import { Button, Menu, MenuItem, Badge } from '@mui/material';
 import NotificationsIcon from '@mui/icons-material/Notifications';
 
@@ -34,30 +35,14 @@ export default function Notifications() {
     }, [])
 
     console.log("hey", data);
+    console.log("eeey", notifications);
     return (
         <div>
-            <nav class="navbar navbar-expand-lg bg-dark navbar-dark">
-                <div class="container-fluid">
-                    <a class="navbar-brand" href="#">{data && data.host.first_name}</a>
-                    <ul class="navbar-nav d-flex flex-row me-1">
-                        <li class="nav-item me-3 me-lg-0">
-                            {/* <div class="dropdown">
-                                <a data-mdb-dropdown-init class="me-3 dropdown-toggle hidden-arrow" href="#" id="navbarDropdownMenuLink"
-                                    role="button" data-mdb-toggle="dropdown" aria-expanded="false">
-                                    <i class="fas fa-bell text-white"></i>
-                                    <span class="badge rounded-pill badge-notification bg-danger"> {data && data.notifications_count} </span>
-                                </a>
-                                <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="navbarDropdownMenuLink">
-                                    {notifications &&
-                                        notifications.map((elem, index) => (
-                                            <li key={index}>
-                                                <a class="dropdown-item" href="#">{elem.created_at}</a>
-                                            </li>
-                                        ))
-                                    }
-                                   
-                                </ul>
-                            </div> */}
+            <nav className="navbar navbar-expand-lg bg-light navbar-light">
+                <div className="container-fluid">
+                    <a className="navbar-brand" href="#">{data && data.host.first_name}</a>
+                    <ul className="navbar-nav d-flex flex-row me-1">
+                        <li className="nav-item me-3 me-lg-0">
                             <div>
                                 <Button
                                     aria-controls="notification-menu"
@@ -65,7 +50,7 @@ export default function Notifications() {
                                     onClick={handleClick}
                                     color="inherit"
                                 >
-                                    <Badge badgeContent={3} color="error">
+                                    <Badge badgeContent={data && data.notifications_count} color="error">
                                         <NotificationsIcon />
                                     </Badge>
                                 </Button>
@@ -75,9 +60,18 @@ export default function Notifications() {
                                     open={Boolean(anchorEl)}
                                     onClose={handleClose}
                                 >
-                                    <MenuItem onClick={handleClose}>Notification 1</MenuItem>
-                                    <MenuItem onClick={handleClose}>Notification 2</MenuItem>
-                                    <MenuItem onClick={handleClose}>Notification 3</MenuItem>
+                                    {notifications &&
+                                        notifications.map((elem, index) => {
+                                            const date = new Date(elem.created_at);
+                                            const month = date.getMonth() + 1; 
+                                            const year = date.getFullYear().toString().slice(-2); 
+                                            return (
+                                                <MenuItem key={index} onClick={handleClose}>
+                                                    <Link to={`/bill_details/${elem.id}/${elem.data.bill_id}`} > <span style={{color: "red"}}>new </span> Bill Of The {`${month}/${year}`} </Link>
+                                                </MenuItem>
+                                            );
+                                        })
+                                    }
                                 </Menu>
                             </div>
                         </li>
